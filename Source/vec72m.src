@@ -1,0 +1,354 @@
+;******************************************************************************
+;* Vector Table for RX72M and Renesas Compiler                                *
+;*                                                                            *
+;*  Copyright (c) 2020-2025, MiSPO Co., Ltd.                                  *
+;*  All rights reserved.                                                      *
+;*                                                                            *
+;* 2020-03-16 Ported to Renesas RX72M                                      FY *
+;* 2020-05-15 Fixed _ROM_VEC comments Reserved->GROUPIE0, IDEI->RXI1 etc.  FY *
+;* 2020-05-15 Moved stack pointer initialization after ini_cpu()           FY *
+;* 2020-11-18 Corrected fixed-vector table location FFFFFFD0 to FFFFFF80   FY *
+;* 2022-06-17 Corrected initial value of PSW from 07030000h to 0F030000h   FY *
+;* 2024-07-10 Modified interrupt vector table comment to note VECT section FY *
+;* 2024-07-10 Fixed FIXEDVECT to EXCEPTVECT/RESETVECT for RXv2 or later    FY *
+;* 2025-07-30 Added _inthdr/_int_sio0_rx/_tx/_er to _ROM_VEC               FY *
+;******************************************************************************
+
+;* 外部参照
+
+        .glb _ini_cpu               ; CPU内蔵周辺の初期化
+        .glb __INIT                 ; Cの初期設定ルーチン
+
+;* 例外ベクタテーブル
+
+        .section EXCEPTVECT,ROMDATA ; リンカでFFFFFF80番地に配置
+
+        .lword -1                   ; FFFFFF80  reserved
+        .lword -1                   ; FFFFFF84  reserved
+        .lword -1                   ; FFFFFF88  reserved
+        .lword -1                   ; FFFFFF8C  reserved
+        .lword -1                   ; FFFFFF90  reserved
+        .lword -1                   ; FFFFFF94  reserved
+        .lword -1                   ; FFFFFF98  reserved
+        .lword -1                   ; FFFFFF9C  reserved
+        .lword -1                   ; FFFFFFA0  reserved
+        .lword -1                   ; FFFFFFA4  reserved
+        .lword -1                   ; FFFFFFA8  reserved
+        .lword -1                   ; FFFFFFAC  reserved
+        .lword -1                   ; FFFFFFB0  reserved
+        .lword -1                   ; FFFFFFB4  reserved
+        .lword -1                   ; FFFFFFB8  reserved
+        .lword -1                   ; FFFFFFBC  reserved
+        .lword -1                   ; FFFFFFC0  reserved
+        .lword -1                   ; FFFFFFC4  reserved
+        .lword -1                   ; FFFFFFC8  reserved
+        .lword -1                   ; FFFFFFCC  reserved
+        .lword -1                   ; FFFFFFD0  特権命令例外
+        .lword -1                   ; FFFFFFD4  アクセス例外
+        .lword -1                   ; FFFFFFD8  reserved
+        .lword -1                   ; FFFFFFDC  未定義命令例外
+        .lword -1                   ; FFFFFFE0  reserved
+        .lword -1                   ; FFFFFFE4  単精度浮動小数点例外
+        .lword -1                   ; FFFFFFE8  reserved
+        .lword -1                   ; FFFFFFEC  reserved
+        .lword -1                   ; FFFFFFE0  reserved
+        .lword -1                   ; FFFFFFE4  reserved
+        .lword -1                   ; FFFFFFF8  ノンマスカブル割り込み
+
+        .section RESETVECT,ROMDATA  ; リンカでFFFFFFFC番地に配置
+
+        .lword _RESET               ; FFFFFFFC  リセット
+
+;* 割り込みベクタテーブル
+;*
+;* 割り込みベクタをROMに定義する場合は、アセンブル時にROMVECマクロに1を定義し、
+;* 割り込みハンドラのシンボルを下記の「-1」の代わりに記述してください。また、
+;* リンカのセクション指定でROM領域に「VECT」がない場合、それを加えてください。
+
+      .IF ROMVEC != 0
+        .section VECT,CODE,ALIGN=4  ; リンカで内蔵ROMに配置
+        .glb    _ROM_VEC
+        .glb    _inthdr
+        .glb    _int_sio0_rx
+        .glb    _int_sio0_tx
+        .glb    _int_sio0_er
+_ROM_VEC:
+        .lword -1                   ;   0: 
+        .lword -1                   ;   1: 
+        .lword -1                   ;   2: 
+        .lword -1                   ;   3: 
+        .lword -1                   ;   4: 
+        .lword -1                   ;   5: 
+        .lword -1                   ;   6: 
+        .lword -1                   ;   7: 
+        .lword -1                   ;   8: 
+        .lword -1                   ;   9: 
+        .lword -1                   ;  10: 
+        .lword -1                   ;  11: 
+        .lword -1                   ;  12: 
+        .lword -1                   ;  13: 
+        .lword -1                   ;  14: 
+        .lword -1                   ;  15: 
+        .lword -1                   ;  16: BUSERR
+        .lword -1                   ;  17: GROUPIE0
+        .lword -1                   ;  18: RAMERR
+        .lword -1                   ;  19: reserved
+        .lword -1                   ;  20: reserved
+        .lword -1                   ;  21: FIFERR
+        .lword -1                   ;  22: reserved
+        .lword -1                   ;  23: FRDYI
+        .lword -1                   ;  24: reserved
+        .lword -1                   ;  25: reserved
+        .lword -1                   ;  26: SWINT2
+        .lword -1                   ;  27: SWINT
+        .lword _inthdr              ;  28: CMI0
+        .lword -1                   ;  29: CMI1
+        .lword -1                   ;  30: CMWI0
+        .lword -1                   ;  31: CMWI1
+        .lword -1                   ;  32: reserved
+        .lword -1                   ;  33: reserved
+        .lword -1                   ;  34: D0FIFO0
+        .lword -1                   ;  35: D1FIFO0
+        .lword -1                   ;  36: reserved
+        .lword -1                   ;  37: reserved
+        .lword -1                   ;  38: SPRI0
+        .lword -1                   ;  39: SPTI0
+        .lword -1                   ;  40: SPRI1
+        .lword -1                   ;  41: SPTI1
+        .lword -1                   ;  42: SPRI
+        .lword -1                   ;  43: SPTI
+        .lword -1                   ;  44: SBFAI
+        .lword -1                   ;  45: MBFAI
+        .lword -1                   ;  46: SSITXI0
+        .lword -1                   ;  47: SSIRXI0
+        .lword -1                   ;  48: SSIRTI1
+        .lword -1                   ;  49: reserved
+        .lword -1                   ;  50: RXI1
+        .lword -1                   ;  51: TXI1
+        .lword -1                   ;  52: RXI0
+        .lword -1                   ;  53: TXI0
+        .lword -1                   ;  54: RXI2
+        .lword -1                   ;  55: TXI2
+        .lword -1                   ;  56: reserved
+        .lword -1                   ;  57: reserved
+        .lword -1                   ;  58: RXI0
+        .lword -1                   ;  59: TXI0
+        .lword -1                   ;  60: RXI1
+        .lword -1                   ;  61: TXI1
+        .lword _int_sio0_rx         ;  62: RXI2
+        .lword _int_sio0_tx         ;  63: TXI2
+        .lword -1                   ;  64: IRQ0
+        .lword -1                   ;  65: IRQ1
+        .lword -1                   ;  66: IRQ2
+        .lword -1                   ;  67: IRQ3
+        .lword -1                   ;  68: IRQ4
+        .lword -1                   ;  69: IRQ5
+        .lword -1                   ;  70: IRQ6
+        .lword -1                   ;  71: IRQ7
+        .lword -1                   ;  72: IRQ8
+        .lword -1                   ;  73: IRQ9
+        .lword -1                   ;  74: IRQ10
+        .lword -1                   ;  75: IRQ11
+        .lword -1                   ;  76: IRQ12
+        .lword -1                   ;  77: IRQ13
+        .lword -1                   ;  78: IRQ14
+        .lword -1                   ;  79: IRQ15
+        .lword -1                   ;  80: RXI3
+        .lword -1                   ;  81: TXI3
+        .lword -1                   ;  82: RXI4
+        .lword -1                   ;  83: TXI4
+        .lword -1                   ;  84: RXI5
+        .lword -1                   ;  85: TXI5
+        .lword -1                   ;  86: RXI6
+        .lword -1                   ;  87: TXI6
+        .lword -1                   ;  88: LVD1
+        .lword -1                   ;  89: LVD2
+        .lword -1                   ;  90: USBR0
+        .lword -1                   ;  91: reserved
+        .lword -1                   ;  92: ALM
+        .lword -1                   ;  93: PRD
+        .lword -1                   ;  94: reserved
+        .lword -1                   ;  95: IWUNNI
+        .lword -1                   ;  96: WUNI
+        .lword -1                   ;  97: PCDFI
+        .lword -1                   ;  98: RXI7
+        .lword -1                   ;  99: TXI7
+        .lword -1                   ; 100: RXI8
+        .lword -1                   ; 101: TXI8
+        .lword -1                   ; 102: RXI9
+        .lword -1                   ; 103: TXI9
+        .lword -1                   ; 104: RXI10
+        .lword -1                   ; 105: TXI10
+        .lword -1                   ; 106: GROUPBE0
+        .lword -1                   ; 107: GROUPBL2
+        .lword -1                   ; 108: SPRI2
+        .lword -1                   ; 109: SPTI2
+        .lword _int_sio0_er         ; 110: GROUPBL0
+        .lword -1                   ; 111: GROUPBL1
+        .lword -1                   ; 112: GROUPAL0
+        .lword -1                   ; 113: GROUPAL1
+        .lword -1                   ; 114: RXI11
+        .lword -1                   ; 115: TXI11
+        .lword -1                   ; 116: RXI12
+        .lword -1                   ; 117: TXI12
+        .lword -1                   ; 118: reserved
+        .lword -1                   ; 119: reserved
+        .lword -1                   ; 120: DMAC0I
+        .lword -1                   ; 121: DMAC1I
+        .lword -1                   ; 122: DMAC2I
+        .lword -1                   ; 123: DMAC3I
+        .lword -1                   ; 124: DMAC74I
+        .lword -1                   ; 125: OSTDI
+        .lword -1                   ; 126: EXDMAC0I
+        .lword -1                   ; 127: EXDMAC1I
+        .lword -1                   ; 128: INTB128
+        .lword -1                   ; 129: INTB129
+        .lword -1                   ; 130: INTB130
+        .lword -1                   ; 131: INTB131
+        .lword -1                   ; 132: INTB132
+        .lword -1                   ; 133: INTB133
+        .lword -1                   ; 134: INTB134
+        .lword -1                   ; 135: INTB135
+        .lword -1                   ; 136: INTB136
+        .lword -1                   ; 137: INTB137
+        .lword -1                   ; 138: INTB138
+        .lword -1                   ; 139: INTB139
+        .lword -1                   ; 140: INTB140
+        .lword -1                   ; 141: INTB141
+        .lword -1                   ; 142: INTB142
+        .lword -1                   ; 143: INTB143
+        .lword -1                   ; 144: INTB144
+        .lword -1                   ; 145: INTB145
+        .lword -1                   ; 146: INTB146
+        .lword -1                   ; 147: INTB147
+        .lword -1                   ; 148: INTB148
+        .lword -1                   ; 149: INTB149
+        .lword -1                   ; 150: INTB150
+        .lword -1                   ; 151: INTB151
+        .lword -1                   ; 152: INTB152
+        .lword -1                   ; 153: INTB153
+        .lword -1                   ; 154: INTB154
+        .lword -1                   ; 155: INTB155
+        .lword -1                   ; 156: INTB156
+        .lword -1                   ; 157: INTB157
+        .lword -1                   ; 158: INTB158
+        .lword -1                   ; 159: INTB159
+        .lword -1                   ; 160: INTB160
+        .lword -1                   ; 161: INTB161
+        .lword -1                   ; 162: INTB162
+        .lword -1                   ; 163: INTB163
+        .lword -1                   ; 164: INTB164
+        .lword -1                   ; 165: INTB165
+        .lword -1                   ; 166: INTB166
+        .lword -1                   ; 167: INTB167
+        .lword -1                   ; 168: INTB168
+        .lword -1                   ; 169: INTB169
+        .lword -1                   ; 170: INTB170
+        .lword -1                   ; 171: INTB171
+        .lword -1                   ; 172: INTB172
+        .lword -1                   ; 173: INTB173
+        .lword -1                   ; 174: INTB174
+        .lword -1                   ; 175: INTB175
+        .lword -1                   ; 176: INTB176
+        .lword -1                   ; 177: INTB177
+        .lword -1                   ; 178: INTB178
+        .lword -1                   ; 179: INTB179
+        .lword -1                   ; 180: INTB180
+        .lword -1                   ; 181: INTB181
+        .lword -1                   ; 182: INTB182
+        .lword -1                   ; 183: INTB183
+        .lword -1                   ; 184: INTB184
+        .lword -1                   ; 185: INTB185
+        .lword -1                   ; 186: INTB186
+        .lword -1                   ; 187: INTB187
+        .lword -1                   ; 188: INTB188
+        .lword -1                   ; 189: INTB189
+        .lword -1                   ; 190: INTB190
+        .lword -1                   ; 191: INTB191
+        .lword -1                   ; 192: INTB192
+        .lword -1                   ; 193: INTB193
+        .lword -1                   ; 194: INTB194
+        .lword -1                   ; 195: INTB195
+        .lword -1                   ; 196: INTB196
+        .lword -1                   ; 197: INTB197
+        .lword -1                   ; 198: INTB198
+        .lword -1                   ; 199: INTB199
+        .lword -1                   ; 200: INTB200
+        .lword -1                   ; 201: INTB201
+        .lword -1                   ; 202: INTB202
+        .lword -1                   ; 203: INTB203
+        .lword -1                   ; 204: INTB204
+        .lword -1                   ; 205: INTB205
+        .lword -1                   ; 206: INTB206
+        .lword -1                   ; 207: INTB207
+        .lword -1                   ; 208: INTA208
+        .lword -1                   ; 209: INTA209
+        .lword -1                   ; 210: INTA210
+        .lword -1                   ; 211: INTA211
+        .lword -1                   ; 212: INTA212
+        .lword -1                   ; 213: INTA213
+        .lword -1                   ; 214: INTA214
+        .lword -1                   ; 215: INTA215
+        .lword -1                   ; 216: INTA216
+        .lword -1                   ; 217: INTA217
+        .lword -1                   ; 218: INTA218
+        .lword -1                   ; 219: INTA219
+        .lword -1                   ; 220: INTA220
+        .lword -1                   ; 221: INTA221
+        .lword -1                   ; 222: INTA222
+        .lword -1                   ; 223: INTA223
+        .lword -1                   ; 224: INTA224
+        .lword -1                   ; 225: INTA225
+        .lword -1                   ; 226: INTA226
+        .lword -1                   ; 227: INTA227
+        .lword -1                   ; 228: INTA228
+        .lword -1                   ; 229: INTA229
+        .lword -1                   ; 230: INTA230
+        .lword -1                   ; 231: INTA231
+        .lword -1                   ; 232: INTA232
+        .lword -1                   ; 233: INTA233
+        .lword -1                   ; 234: INTA234
+        .lword -1                   ; 235: INTA235
+        .lword -1                   ; 236: INTA236
+        .lword -1                   ; 237: INTA237
+        .lword -1                   ; 238: INTA238
+        .lword -1                   ; 239: INTA239
+        .lword -1                   ; 240: INTA240
+        .lword -1                   ; 241: INTA241
+        .lword -1                   ; 242: INTA242
+        .lword -1                   ; 243: INTA243
+        .lword -1                   ; 244: INTA244
+        .lword -1                   ; 245: INTA245
+        .lword -1                   ; 246: INTA246
+        .lword -1                   ; 247: INTA247
+        .lword -1                   ; 248: INTA248
+        .lword -1                   ; 249: INTA249
+        .lword -1                   ; 250: INTA250
+        .lword -1                   ; 251: INTA251
+        .lword -1                   ; 252: INTA252
+        .lword -1                   ; 253: INTA253
+        .lword -1                   ; 254: INTA254
+        .lword -1                   ; 255: INTA255
+      .ENDIF
+
+;* リセット処理
+
+        .section STACK_END,DATA,ALIGN=4
+        .section P,CODE
+        .glb _RESET
+_RESET:
+        mov.l   #0F030000h, r1              ; PSWの初期値(割り込みマスクレベルを最高に)
+        mvtc    r1, psw
+
+        ; CPU内蔵周辺の初期化
+
+        mvtc    #00001000h, usp             ; スタックポインタを内蔵RAMに設定
+        bsr     _ini_cpu
+
+        ; Cの初期化ルーチンへ
+
+        mvtc    #(TOPOF STACK_END), isp     ; 割り込み用含むスタックポインタを
+        mvtc    #(TOPOF STACK_END), usp     ; STACKセクションの終わりに再設定
+        bra     __INIT
+
+        .end
